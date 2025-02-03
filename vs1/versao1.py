@@ -15,26 +15,28 @@ imagem_fundo = pygame.image.load("background01.png")
 tela = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Doodle jump")
 player = pygame.transform.scale(pygame.image.load("character_right.png"), (90, 70))
+
 player_x = 170
 player_y = 400
 blocks = []
 jump = False
-y_change =  0
+y_change =  player_y
 rect_list= []
 
 #atualizando y do jogador
 def player_position(y):
     global jump
     global y_change
-    gravity = 1
+    gravity = .4
     jump_h = 10
-    if jump:
+    if jump == True:
         y_change -= jump_h
         jump = False
     y = y_change
     y_change += gravity
     return y
- #Verificando colisõe
+
+#Verificando colisões
 def check_collision(rect_list, j):
     global player_x
     global player_y
@@ -44,8 +46,6 @@ def check_collision(rect_list, j):
         if rect_list[i].colliderect([player_x, player_y + 60, 90, 10]) and not jump and y_change > 0:
             j = True
     return j
-
-
 
 
 while True:
@@ -60,7 +60,7 @@ while True:
            pygame.quit()
            sys.exit()
 
-    player_position(player_y)
+    player_y = player_position(player_y)
     jump = check_collision(blocks, jump)
 
     pygame.display.flip()
