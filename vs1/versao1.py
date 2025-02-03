@@ -20,7 +20,7 @@ player_x = 170
 player_y = 400
 blocks = []
 jump = False
-y_change =  player_y
+y_change = player_y
 rect_list= []
 
 #atualizando y do jogador
