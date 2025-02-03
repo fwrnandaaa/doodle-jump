@@ -1,40 +1,68 @@
 import sys
 import time
-
 import pygame
-
 pygame.init()
-width, height = 640, 580
+
+width, height = 400, 500
 size = width, height
-tela = pygame.display.set_mode((540, 630))
-pygame.display.set_caption("Doodle jump")
 time = pygame.time.Clock()
+fps = 60
+green = (35, 111, 51)
+platforms = [[175, 480, 70, 10]]
+
 
 imagem_fundo = pygame.image.load("background01.png")
+tela = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Doodle jump")
+player = pygame.transform.scale(pygame.image.load("character_right.png"), (90, 70))
+player_x = 170
+player_y = 400
+blocks = []
+jump = False
+y_change =  0
+rect_list= []
 
-character = pygame.image.load("character_right.png")
-character_rect = character.get_rect()
-character_rect.y = 420
-character_rect.x = 320
+#atualizando y do jogador
+def player_position(y):
+    global jump
+    global y_change
+    gravity = 1
+    jump_h = 10
+    if jump:
+        y_change -= jump_h
+        jump = False
+    y = y_change
+    y_change += gravity
+    return y
+ #Verificando colisõe
+def check_collision(rect_list, j):
+    global player_x
+    global player_y
+    global y_change
+    for i in range(len(rect_list)):
+  
+        if rect_list[i].colliderect([player_x, player_y + 60, 90, 10]) and not jump and y_change > 0:
+            j = True
+    return j
 
-platform = pygame.image.load("platform.png")
-platform_rect = platform.get_rect()
-platform_rect.center = (width // 2, 578)
 
-character_x = 50
-character_y = 480
+
 
 while True:
-    tela.blit(platform, platform_rect)
+    time.tick(fps)
+    tela.blit(imagem_fundo, (0, 0))
+    tela.blit(player, (player_x, player_y))
+    for i in range (len(platforms)):
+        block = pygame.draw.rect(tela, green, platforms[i])
+        blocks.append(block)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
            pygame.quit()
            sys.exit()
 
-  
-    tela.blit(imagem_fundo, (0, 0))
-    tela.blit(character, (character_x, character_y))
-    tela.blit(platform, platform_rect)
+    player_position(player_y)
+    jump = check_collision(blocks, jump)
+
     pygame.display.flip()
 
 
