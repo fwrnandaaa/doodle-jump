@@ -23,8 +23,18 @@ is_jumping = False
 jump_height = 0
 jump_speed = -15
 fall_speed = 20
+platform_1_width = 160
+platform_1_height = 440
+platform_position = (350, 500)
+platform_fall_speed = 0
+plataformas_na_tela = []
 
+def platforma_desce(plataforma, plataforma_position):
+    while True:
+        plataforma_position += 1
+        tela.blit(plataforma, (plataforma_position) )
 while True:
+    
     time.tick(fps)
     
     for event in pygame.event.get():
@@ -37,7 +47,8 @@ while True:
     if keys[pygame.K_UP] and not is_jumping:
         is_jumping = True
         jump_height = 0
-
+        plataforma_nova = platforma_desce(plataforma, platform_position)
+        plataformas_na_tela.append(plataforma_nova)
     if is_jumping:
         playerrect.y += jump_speed
         jump_height += 1
@@ -59,8 +70,9 @@ while True:
         if playerrect.right > 500:
             playerrect.right = 500
 
-
+    
     tela.blit(imagem_fundo, (0, 0))
     tela.blit(player, playerrect)
-    tela.blit(plataforma, (width/2, height/2))
+    tela.blit(plataforma, (200, 100))
     pygame.display.flip()
+  
