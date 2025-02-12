@@ -1,54 +1,78 @@
 import sys
 import time
 import pygame
+import random
 pygame.init()
 
+#Constantes gerais
 width, height = 400, 500
 size = width, height
 time = pygame.time.Clock()
 fps = 60
-
 imagem_fundo = pygame.image.load("background01.png")
 tela = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Doodle jump")
+
+#Constantes referentes as plataformas
+plataforma = pygame.image.load("platform.png")
+altura_plataforma = plataforma.get_height()
+larguraplataforma = plataforma.get_width()
+plataformas = []
+
+continua = True
+
+#Constantes referentes ao jogador
 player = pygame.transform.scale(pygame.image.load("character_right.png"), (90, 70))
 playerrect = player.get_rect()
-playerrect.x = 170
+playerrect.x = 200
 playerrect.y = 400
-
-plataforma = pygame.image.load("platform.png")
-
-playerrect = pygame.Rect(100, 100, 50, 50)
+playerrect = pygame.Rect(200, 400, 0, 50)
 is_jumping = False
 jump_height = 0
 jump_speed = -15
 fall_speed = 20
-platform_1_width = 160
-platform_1_height = 440
-platform_position = (350, 500)
-platform_fall_speed = 0
-plataformas_na_tela = []
 
-def platforma_desce(plataforma, plataforma_position):
-    while True:
-        plataforma_position += 1
-        tela.blit(plataforma, (plataforma_position) )
+#Cria e adicionar plataformas
+def criar_plataforma():
+    x = random.randint(0, width - larguraplataforma)
+    return {'objeto': plataforma, 'posicao': (x, 0), 'velocidade': (1)}
+
+#Função move plataformas
+def move_plataformas(objeto):
+        pos = list(objeto['posicao']) 
+        pos[1] += objeto['velocidade'] 
+        objeto['posicao'] = tuple(pos) 
+
 while True:
-    
     time.tick(fps)
-    
+    tela.blit(imagem_fundo, (0, 0))
+    tela.blit(player, (playerrect))
+
+    #Criando novas plataformas no topo da tela quando a ultima tiver na metade da tela
+    if len(plataformas) < 1:  
+        plataformas.append(criar_plataforma())
+    elif plataformas[-1]['posicao'][1] >= height/2:
+        plataformas.append(criar_plataforma())
+
+  
+    for p in plataformas:
+        move_plataformas(p)
+        tela.blit(p['objeto'], p['posicao']) 
+
+
+    plataformas = [p for p in plataformas if p['posicao'][1] < height]
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
     keys = pygame.key.get_pressed()
-    
+
     if keys[pygame.K_UP] and not is_jumping:
         is_jumping = True
         jump_height = 0
-        plataforma_nova = platforma_desce(plataforma, platform_position)
-        plataformas_na_tela.append(plataforma_nova)
+
     if is_jumping:
         playerrect.y += jump_speed
         jump_height += 1
@@ -67,12 +91,8 @@ while True:
     if keys[pygame.K_RIGHT]:
         playerrect.x += 5
         player = pygame.transform.scale(pygame.image.load("character_right.png"), (90, 70))
-        if playerrect.right > 500:
-            playerrect.right = 500
 
-    
-    tela.blit(imagem_fundo, (0, 0))
-    tela.blit(player, playerrect)
-    tela.blit(plataforma, (200, 100))
+        if playerrect.right > 300:
+            playerrect.right = 300
+
     pygame.display.flip()
-  
