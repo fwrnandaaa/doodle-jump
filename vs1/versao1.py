@@ -8,6 +8,7 @@ pygame.init()
 width, height = 400, 500
 size = width, height
 time = pygame.time.Clock()
+clock = pygame.time.Clock()
 fps = 60
 imagem_fundo = pygame.image.load("background01.png")
 tela = pygame.display.set_mode((width, height))
@@ -18,8 +19,12 @@ plataforma = pygame.image.load("platform.png")
 altura_plataforma = plataforma.get_height()
 larguraplataforma = plataforma.get_width()
 plataformas = []
-
 continua = True
+velocity_x = 0.1
+plataformarect = plataforma.get_rect()
+plataformarect.x = 200
+plataformarect.y = 400
+
 
 #Constantes referentes ao jogador
 player = pygame.transform.scale(pygame.image.load("character_right.png"), (90, 70))
@@ -39,16 +44,18 @@ def criar_plataforma():
 
 #Função move plataformas
 def move_plataformas(objeto):
-        pos = list(objeto['posicao']) 
-        pos[1] += objeto['velocidade'] 
-        objeto['posicao'] = tuple(pos) 
+    pos = list(objeto['posicao']) 
+    pos[1] += objeto['velocidade'] 
+    objeto['posicao'] = tuple(pos) 
+   
 
 while True:
     time.tick(fps)
+    dt = clock.tick(30)
     tela.blit(imagem_fundo, (0, 0))
     tela.blit(player, (playerrect))
 
-    #Criando novas plataformas no topo da tela quando a ultima tiver na metade da tela
+    #Criando novas plataformas no topo da tela quando a ultima estiver na metade da tela
     if len(plataformas) < 1:  
         plataformas.append(criar_plataforma())
     elif plataformas[-1]['posicao'][1] >= height/2:
@@ -94,5 +101,15 @@ while True:
 
         if playerrect.right > 300:
             playerrect.right = 300
+            
+    for i in range (len(plataformas)):
+         x = plataformarect[i].x
+         y = plataformarect[i].y
+         crop = pygame.Rect((x,y), (25,25))
+         if not (playerrect.colliderect(crop)):
+             plataformas.append(plataforma[i])
+             plataformarect.append(plataformas[i])
+             
+             ##CORRIGIR ISSO COM BASE NA VERSAO 3 DE JORGIANO
 
-    pygame.display.flip()
+         pygame.display.flip()
