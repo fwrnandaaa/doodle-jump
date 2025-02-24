@@ -41,19 +41,19 @@ def criar_plataforma():
     x = random.randint(0, width - larguraplataforma)
     return {'objeto': plataforma, 'posicao': (x, 0), 'velocidade': (3)}
 
-# Função move plataformas
+#função move plataformas
 def move_plataformas(objeto):
     pos = list(objeto['posicao']) 
     pos[1] += objeto['velocidade'] 
     objeto['posicao'] = tuple(pos) 
 
-# Função para verificar colisão
+#função para verificar colisão
 def verificar_colisao(playerrect, plataformas):
     for p in plataformas:
         plataforma_rect = pygame.Rect(p['posicao'][0], p['posicao'][1], larguraplataforma, altura_plataforma)
         if playerrect.colliderect(plataforma_rect):
-            if playerrect.bottom <= plataforma_rect.top + jump_speed:  # Verifica se o jogador está caindo
-                playerrect.bottom = plataforma_rect.top   # Ajusta a posição do jogador
+            if playerrect.bottom <= plataforma_rect.top + jump_speed:  
+                playerrect.bottom = plataforma_rect.top  
                 return True
 
     return False
@@ -64,7 +64,7 @@ while True:
     tela.blit(imagem_fundo, (0, 0))
     tela.blit(player, (playerrect))
 
-    # Criando novas plataformas no topo da tela quando a ultima estiver na metade da tela
+    #criando novas plataformas no topo da tela quando a ultima estiver na metade da tela
     if len(plataformas) < 1:  
         plataformas.append(criar_plataforma())
     elif plataformas[-1]['posicao'][1] >= height / 3:
@@ -94,10 +94,10 @@ while True:
         if jump_height >= 10: 
             jump_speed = fall_speed  
 
-        # Verifica colisão com plataformas
+        #verifica colisão com plataformas
         if verificar_colisao(playerrect, plataformas):
             is_jumping = False
-            jump_speed = -15  # Reseta a velocidade de pulo
+            jump_speed = -15  
 
         if playerrect.bottom >= 480:  
             playerrect.bottom = 480
